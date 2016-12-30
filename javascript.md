@@ -41,10 +41,32 @@ The `kubernetes` object has the following objects:
 - `discovery`: API discovery
 - `pod`: Pod management
 - `namespace`: Namespace management
+- `secret`: Secrets
+- `configmap`: ConfigMaps
+- `replicationcontroller`: Replication controllers
+- `persistentvolumeclaim`: Persistent volume claims
+- `statefulset`: Stateful set (formerly PetSet)
+
+## The Standard Methods
+
+Many of the objects on `kubernetes` follow the same API. 
+
+- create(objectDefinition): create a new object. For example, `kuberetes.pod.create` takes a Pod definition and creates a pod.
+- delete(name, deleteOpts): delete an object
+- list(listOpts): list objects. The `listOpts` object provides filters.
+- get(name): Get an object by name
+- update(objectDefinition): update an existing object
+- updateStatus(objectDefinition): update an object status (expert)
+- deleteCollection(deleteOpts, listOpts): delete a set of objects by `listOpts` filter.
+
+```js
+res = kubernetes.pods.list({labelSelector: "foo = bar"});
+```
+
 
 ## The `kubernetes.discovery` object.
 
-This object provides access to API discovery mechanisms.
+This object is quite a bit different than the others. This object provides access to API discovery mechanisms.
 
 ```js
 ver = kubernetes.discovery.serverVersion()
@@ -61,18 +83,3 @@ console.log(ver.gitVersion)
 - `serverPreferredResources`: Preferred server resources.
 - `serverPreferredNamespacedResources`: Namespaced preferred server resources.
 
-## The `kubernetes.pod` object
-
-This object provides access to Kubernetes' pods API.
-
-```js
-res = kubernetes.pods.list({labelSelector: "foo = bar"});
-```
-
-- create(podDef)
-- delete(name, deleteOpts)
-- list(listOpts)
-- get(name)
-- update(podDef)
-- updateStatus(podDef)
-- deleteCollection(deleteOpts, listOpts)
