@@ -32,6 +32,7 @@ type Kubernetes struct {
 	// This is for expert use only.
 	//Impl kubernetes.Interface `otto:"impl"`
 
+	// Core
 	Namespace             *Namespace             `otto:"namespace"`
 	Discovery             *Discovery             `otto:"discovery"`
 	Pod                   *Pod                   `otto:"pod"`
@@ -41,7 +42,17 @@ type Kubernetes struct {
 	ServiceAccount        *ServiceAccount        `otto:"serviceaccount"`
 	PersistentVolumeClaim *PersistentVolumeClaim `otto:"persistentvolumeclaim"`
 	ReplicationController *ReplicationController `otto:"replicationcontroller"`
-	StatefulSet           *StatefulSet           `otto:"statefulset"`
+
+	// Apps
+	StatefulSet *StatefulSet `otto:"statefulset"`
+
+	//Extensions
+	Deployment         *Deployment         `otto:"deployment"`
+	ReplicaSet         *ReplicaSet         `otto:"replicaset"`
+	DaemonSet          *DaemonSet          `otto:"daemonset"`
+	Ingress            *Ingress            `otto:"ingress"`
+	PodSecurityPolicy  *PodSecurityPolicy  `otto:"podsecuritypolicy"`
+	ThirdPartyResource *ThirdPartyResource `otto:"thirdpartyresource"`
 }
 
 // Register registers the top-level Kubernetes API objects with the JS runtime.
@@ -66,6 +77,12 @@ func RegisterWithClient(vm *otto.Otto, c kubernetes.Interface) error {
 		PersistentVolumeClaim: NewPersistentVolumeClaim(c, vm),
 		ReplicationController: NewReplicationController(c, vm),
 		StatefulSet:           NewStatefulSet(c, vm),
+		Deployment:            NewDeployment(c, vm),
+		ReplicaSet:            NewReplicaSet(c, vm),
+		DaemonSet:             NewDaemonSet(c, vm),
+		Ingress:               NewIngress(c, vm),
+		PodSecurityPolicy:     NewPodSecurityPolicy(c, vm),
+		ThirdPartyResource:    NewThirdPartyResource(c, vm),
 	}
 	return ottomatic.Register("kubernetes", k, vm)
 }

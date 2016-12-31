@@ -38,6 +38,8 @@ The top-level object for accessing Kubernetes is the `kubernetes` object.
 
 The `kubernetes` object has the following objects:
 
+**Core:**
+
 - `discovery`: API discovery
 - `pod`: Pod management
 - `namespace`: Namespace management
@@ -45,7 +47,17 @@ The `kubernetes` object has the following objects:
 - `configmap`: ConfigMaps
 - `replicationcontroller`: Replication controllers
 - `persistentvolumeclaim`: Persistent volume claims
+
+**Apps:**
+
 - `statefulset`: Stateful set (formerly PetSet)
+
+**Extensions:**
+
+- `daemonset`
+- `deployment`
+- `replicaset`
+- `ingress`
 
 ## The Standard Methods
 
