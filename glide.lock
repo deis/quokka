@@ -1,5 +1,5 @@
-hash: 6a3a76356c289c88310ee36b97bf72f879d86239bc1bd1baecc9ea21179c6e15
-updated: 2016-12-29T13:03:42.303758921-07:00
+hash: 6cabd9f76ec1e131f6166287c08b0fa9953a435b914009e4742a669b3c2a1915
+updated: 2016-12-30T17:44:17.220377488-07:00
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -87,6 +87,8 @@ imports:
   - registry
   - token
   - underscore
+- name: github.com/spf13/cobra
+  version: f62e98d28ab7ad31d707ba837a966378465c7b57
 - name: github.com/spf13/pflag
   version: 5ccb023bc27df288a957c5e994cd44fd19619465
 - name: github.com/technosophos/ottomatic

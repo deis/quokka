@@ -53,6 +53,9 @@ type Kubernetes struct {
 	Ingress            *Ingress            `otto:"ingress"`
 	PodSecurityPolicy  *PodSecurityPolicy  `otto:"podsecuritypolicy"`
 	ThirdPartyResource *ThirdPartyResource `otto:"thirdpartyresource"`
+
+	// Batch
+	Job *Job `otto:"job"`
 }
 
 // Register registers the top-level Kubernetes API objects with the JS runtime.
@@ -83,6 +86,7 @@ func RegisterWithClient(vm *otto.Otto, c kubernetes.Interface) error {
 		Ingress:               NewIngress(c, vm),
 		PodSecurityPolicy:     NewPodSecurityPolicy(c, vm),
 		ThirdPartyResource:    NewThirdPartyResource(c, vm),
+		Job:                   NewJob(c, vm),
 	}
 	return ottomatic.Register("kubernetes", k, vm)
 }

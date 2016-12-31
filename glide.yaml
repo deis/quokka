@@ -2,5 +2,6 @@ package: github.com/deis/quokka
 import:
 - package: github.com/robertkrimen/otto
 - package: k8s.io/client-go
-  version: "2.0.0-alpha.1"
+  version: 2.0.0-alpha.1
 - package: github.com/technosophos/ottomatic
+- package: github.com/spf13/cobra

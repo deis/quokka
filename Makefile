@@ -3,6 +3,7 @@
 build:
 	mkdir -p ./bin
 	go build -o bin/ftest _functional_tests/*.go
+	go build -o bin/quokka cmd/quokka/*.go
 
 .PHONY: test
 test: build

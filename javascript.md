@@ -58,6 +58,9 @@ The `kubernetes` object has the following objects:
 - `deployment`
 - `replicaset`
 - `ingress`
+- `thirdpartyresource`
+- `podsecuritypolicy`:w
+
 
 ## The Standard Methods
 
