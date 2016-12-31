@@ -22,9 +22,9 @@ type Job struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewJob(c kubernetes.Interface, o *otto.Otto) *Job {
+func NewJob(c kubernetes.Interface, o *otto.Otto, ns string) *Job {
 	pi := func() v1batch.JobInterface {
-		return c.BatchV1().Jobs("default")
+		return c.BatchV1().Jobs(ns)
 	}
 	return &Job{
 		Create: func(pod map[string]interface{}) otto.Value {

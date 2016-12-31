@@ -21,9 +21,9 @@ type PersistentVolumeClaim struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewPersistentVolumeClaim(c kubernetes.Interface, o *otto.Otto) *PersistentVolumeClaim {
+func NewPersistentVolumeClaim(c kubernetes.Interface, o *otto.Otto, ns string) *PersistentVolumeClaim {
 	pi := func() v1core.PersistentVolumeClaimInterface {
-		return c.CoreV1().PersistentVolumeClaims("default")
+		return c.CoreV1().PersistentVolumeClaims(ns)
 	}
 	return &PersistentVolumeClaim{
 		Create: func(pod map[string]interface{}) otto.Value {

@@ -22,14 +22,14 @@ type Secret struct {
 	// We do not currently support secret expansion
 }
 
-func NewSecret(c kubernetes.Interface, o *otto.Otto) *Secret {
+func NewSecret(c kubernetes.Interface, o *otto.Otto, ns string) *Secret {
 	iface := func() v1core.SecretInterface {
-		return c.CoreV1().Secrets("default")
+		return c.CoreV1().Secrets(ns)
 	}
 	return &Secret{
-		Create: func(pod map[string]interface{}) otto.Value {
+		Create: func(sec map[string]interface{}) otto.Value {
 			gp := &v1.Secret{}
-			poe(remarshal(pod, gp))
+			poe(remarshal(sec, gp))
 			p, err := iface().Create(gp)
 			poe(err)
 			return MustToObject(p, o)
@@ -52,9 +52,9 @@ func NewSecret(c kubernetes.Interface, o *otto.Otto) *Secret {
 			poe(err)
 			return MustToObject(out, o)
 		},
-		Update: func(pod map[string]interface{}) otto.Value {
+		Update: func(sec map[string]interface{}) otto.Value {
 			gp := &v1.Secret{}
-			poe(remarshal(pod, gp))
+			poe(remarshal(sec, gp))
 			p, err := iface().Update(gp)
 			poe(err)
 			return MustToObject(p, o)

@@ -22,9 +22,9 @@ type DaemonSet struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewDaemonSet(c kubernetes.Interface, o *otto.Otto) *DaemonSet {
+func NewDaemonSet(c kubernetes.Interface, o *otto.Otto, ns string) *DaemonSet {
 	pi := func() v1beta1extensions.DaemonSetInterface {
-		return c.ExtensionsV1beta1().DaemonSets("default")
+		return c.ExtensionsV1beta1().DaemonSets(ns)
 	}
 	return &DaemonSet{
 		Create: func(pod map[string]interface{}) otto.Value {

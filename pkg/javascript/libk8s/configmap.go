@@ -20,9 +20,9 @@ type ConfigMap struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewConfigMap(c kubernetes.Interface, o *otto.Otto) *ConfigMap {
+func NewConfigMap(c kubernetes.Interface, o *otto.Otto, ns string) *ConfigMap {
 	iface := func() v1core.ConfigMapInterface {
-		return c.CoreV1().ConfigMaps("default")
+		return c.CoreV1().ConfigMaps(ns)
 	}
 	return &ConfigMap{
 		Create: func(pod map[string]interface{}) otto.Value {

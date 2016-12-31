@@ -22,9 +22,9 @@ type Deployment struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewDeployment(c kubernetes.Interface, o *otto.Otto) *Deployment {
+func NewDeployment(c kubernetes.Interface, o *otto.Otto, ns string) *Deployment {
 	pi := func() v1beta1extensions.DeploymentInterface {
-		return c.ExtensionsV1beta1().Deployments("default")
+		return c.ExtensionsV1beta1().Deployments(ns)
 	}
 	return &Deployment{
 		Create: func(pod map[string]interface{}) otto.Value {

@@ -23,9 +23,9 @@ type Pod struct {
 	// We do not currently support pod expansion
 }
 
-func NewPod(c kubernetes.Interface, o *otto.Otto) *Pod {
+func NewPod(c kubernetes.Interface, o *otto.Otto, ns string) *Pod {
 	pi := func() v1core.PodInterface {
-		return c.CoreV1().Pods("default")
+		return c.CoreV1().Pods(ns)
 	}
 	return &Pod{
 		Create: func(pod map[string]interface{}) otto.Value {

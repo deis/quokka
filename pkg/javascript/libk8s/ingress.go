@@ -22,9 +22,9 @@ type Ingress struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewIngress(c kubernetes.Interface, o *otto.Otto) *Ingress {
+func NewIngress(c kubernetes.Interface, o *otto.Otto, ns string) *Ingress {
 	pi := func() v1beta1extensions.IngressInterface {
-		return c.ExtensionsV1beta1().Ingresses("default")
+		return c.ExtensionsV1beta1().Ingresses(ns)
 	}
 	return &Ingress{
 		Create: func(pod map[string]interface{}) otto.Value {

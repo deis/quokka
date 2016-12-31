@@ -2,94 +2,17 @@ package libk8s
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/robertkrimen/otto"
-	"github.com/technosophos/ottomatic"
 
 	"k8s.io/client-go/kubernetes"
-	//"k8s.io/client-go/1.4/pkg/api/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
-
-// Kubernetes is the top-level object exposed to JavaScript.
-// It consisists of two things: A high-level API to work wtih Kubernetes and
-// low-level access to the Go Kubernetes API.
-//
-// The high-level API is designed to feel native to JavaScript. It follows the
-// common JavaScript patterns and conventions.
-//
-// Access to the low-level API is granted with knowledge that it will not be easy
-// to use or even possible to use. But it offers dedicated and knowledgeable
-// developers the opportunity to experiment. It may be deprecated prior to
-// the initial release.
-type Kubernetes struct {
-	// Impl provides the JavaScript runtime with access to the raw implementation.
-	//
-	// This is for expert use only.
-	//Impl kubernetes.Interface `otto:"impl"`
-
-	// Core
-	Namespace             *Namespace             `otto:"namespace"`
-	Discovery             *Discovery             `otto:"discovery"`
-	Pod                   *Pod                   `otto:"pod"`
-	Secret                *Secret                `otto:"secret"`
-	ConfigMap             *ConfigMap             `otto:"configmap"`
-	Service               *Service               `otto:"service"`
-	ServiceAccount        *ServiceAccount        `otto:"serviceaccount"`
-	PersistentVolumeClaim *PersistentVolumeClaim `otto:"persistentvolumeclaim"`
-	ReplicationController *ReplicationController `otto:"replicationcontroller"`
-
-	// Apps
-	StatefulSet *StatefulSet `otto:"statefulset"`
-
-	//Extensions
-	Deployment         *Deployment         `otto:"deployment"`
-	ReplicaSet         *ReplicaSet         `otto:"replicaset"`
-	DaemonSet          *DaemonSet          `otto:"daemonset"`
-	Ingress            *Ingress            `otto:"ingress"`
-	PodSecurityPolicy  *PodSecurityPolicy  `otto:"podsecuritypolicy"`
-	ThirdPartyResource *ThirdPartyResource `otto:"thirdpartyresource"`
-
-	// Batch
-	Job *Job `otto:"job"`
-}
-
-// Register registers the top-level Kubernetes API objects with the JS runtime.
-func Register(vm *otto.Otto) error {
-	c, err := kubeClient()
-	if err != nil {
-		return err
-	}
-	return RegisterWithClient(vm, c)
-}
-
-// RegisterWithClient registers the Kubernetes object to an existing Kubernetes client.
-func RegisterWithClient(vm *otto.Otto, c kubernetes.Interface) error {
-	k := &Kubernetes{
-		Namespace:             NewNamespace(c, vm),
-		Discovery:             NewDiscovery(c, vm),
-		Pod:                   NewPod(c, vm),
-		Secret:                NewSecret(c, vm),
-		ConfigMap:             NewConfigMap(c, vm),
-		Service:               NewService(c, vm),
-		ServiceAccount:        NewServiceAccount(c, vm),
-		PersistentVolumeClaim: NewPersistentVolumeClaim(c, vm),
-		ReplicationController: NewReplicationController(c, vm),
-		StatefulSet:           NewStatefulSet(c, vm),
-		Deployment:            NewDeployment(c, vm),
-		ReplicaSet:            NewReplicaSet(c, vm),
-		DaemonSet:             NewDaemonSet(c, vm),
-		Ingress:               NewIngress(c, vm),
-		PodSecurityPolicy:     NewPodSecurityPolicy(c, vm),
-		ThirdPartyResource:    NewThirdPartyResource(c, vm),
-		Job:                   NewJob(c, vm),
-	}
-	return ottomatic.Register("kubernetes", k, vm)
-}
 
 func kubeConfig() (*rest.Config, error) {
 	// Try in-cluster config:
@@ -147,10 +70,10 @@ func trunc(s string, m int) string {
 // ToObject marshals an interface to JSON, and then creates a JavaScript object.
 // The object is then returned as a value.
 func ToObject(v interface{}, o *otto.Otto) (otto.Value, error) {
-	// Let Go buikd the JavaScript object for us.
+	// Let Go build the JavaScript object for us.
 	j, err := json.Marshal(v)
 	if err != nil {
-		return otto.UndefinedValue(), err
+		return otto.UndefinedValue(), fmt.Errorf("ToObject marshal %T: %s", v, err)
 	}
 
 	log.Printf("Out: %s", trunc(string(j), 1024))
@@ -159,7 +82,7 @@ func ToObject(v interface{}, o *otto.Otto) (otto.Value, error) {
 	// just the rval is.
 	obj, err := o.Object("v = " + string(j))
 	if err != nil {
-		return otto.UndefinedValue(), err
+		return otto.UndefinedValue(), fmt.Errorf("ToObject object %T: %s", v, err)
 	}
 	return obj.Value(), nil
 }
@@ -190,7 +113,10 @@ func poe(err error) {
 func remarshal(src, dest interface{}) error {
 	data, err := json.Marshal(src)
 	if err != nil {
-		return err
+		return fmt.Errorf("remarshal %T=>%T (1): %s", src, dest, err)
 	}
-	return json.Unmarshal(data, dest)
+	if err = json.Unmarshal(data, dest); err != nil {
+		return fmt.Errorf("remarshal %T=>%T (2): %s", src, dest, err)
+	}
+	return nil
 }

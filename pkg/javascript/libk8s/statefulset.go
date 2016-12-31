@@ -22,9 +22,9 @@ type StatefulSet struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewStatefulSet(c kubernetes.Interface, o *otto.Otto) *StatefulSet {
+func NewStatefulSet(c kubernetes.Interface, o *otto.Otto, ns string) *StatefulSet {
 	pi := func() v1beta1apps.StatefulSetInterface {
-		return c.AppsV1beta1().StatefulSets("default")
+		return c.AppsV1beta1().StatefulSets(ns)
 	}
 	return &StatefulSet{
 		Create: func(pod map[string]interface{}) otto.Value {

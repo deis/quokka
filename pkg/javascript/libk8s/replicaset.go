@@ -22,9 +22,9 @@ type ReplicaSet struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewReplicaSet(c kubernetes.Interface, o *otto.Otto) *ReplicaSet {
+func NewReplicaSet(c kubernetes.Interface, o *otto.Otto, ns string) *ReplicaSet {
 	pi := func() v1beta1extensions.ReplicaSetInterface {
-		return c.ExtensionsV1beta1().ReplicaSets("default")
+		return c.ExtensionsV1beta1().ReplicaSets(ns)
 	}
 	return &ReplicaSet{
 		Create: func(pod map[string]interface{}) otto.Value {

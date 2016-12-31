@@ -2,6 +2,13 @@ console.log("====> namespace test")
 
 namespacename = "quokkatest"
 
+// Just in case the last teardown failed
+try {
+  kubernetes.namespace.deleteCollection({}, {labelSelector: "heritage=Quokka"})
+} catch (e) {
+  console.log("cleaned leftover namespace")
+}
+
 mynamespace = {
     "kind": "Namespace",
     "apiVersion": "v1",

@@ -21,9 +21,9 @@ type ReplicationController struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewReplicationController(c kubernetes.Interface, o *otto.Otto) *ReplicationController {
+func NewReplicationController(c kubernetes.Interface, o *otto.Otto, ns string) *ReplicationController {
 	pi := func() v1core.ReplicationControllerInterface {
-		return c.CoreV1().ReplicationControllers("default")
+		return c.CoreV1().ReplicationControllers(ns)
 	}
 	return &ReplicationController{
 		Create: func(pod map[string]interface{}) otto.Value {

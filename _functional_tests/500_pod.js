@@ -1,12 +1,15 @@
 console.log("====> pod tests")
 
+ns = "quokkatest"
+k = kubernetes.withNS(ns)
+
 podname = "mypod"
 mypod = {
     "kind": "Pod",
     "apiVersion": "v1",
     "metadata": {
         "name": podname,
-        "namespace": "quokkatest",
+        "namespace": ns,
         "labels": {
             "heritage": "Quokka",
         },
@@ -27,7 +30,7 @@ mypod = {
 };
 
 
-res = kubernetes.pod.create(mypod)
+res = k.pod.create(mypod)
 if (res.metadata.name != podname) {
 	throw "expected pod named " + podname
 }
@@ -35,24 +38,24 @@ if (res.metadata.name != podname) {
 // TODO: Might need to sleep here.
 
 // Get our new pod by name
-pp = kubernetes.pod.get(podname)
+pp = k.pod.get(podname)
 if (pp.metadata.name != podname) {
 	throw "unexpected pod name: " + pp.metadata.name
 }
 
 // Search for our new pod.
-matches = kubernetes.pod.list({labelSelector: "heritage = Quokka"})
+matches = k.pod.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one pod in list"
 }
 
 // Update the pod
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.pod.update(res)
+res2 = k.pod.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
 // TODO: Might need to sleep here.
 
-kubernetes.pod.delete(podname, {})
+k.pod.delete(podname, {})

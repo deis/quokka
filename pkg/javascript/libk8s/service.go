@@ -21,9 +21,9 @@ type Service struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewService(c kubernetes.Interface, o *otto.Otto) *Service {
+func NewService(c kubernetes.Interface, o *otto.Otto, ns string) *Service {
 	pi := func() v1core.ServiceInterface {
-		return c.CoreV1().Services("default")
+		return c.CoreV1().Services(ns)
 	}
 	return &Service{
 		Create: func(pod map[string]interface{}) otto.Value {

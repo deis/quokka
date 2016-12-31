@@ -9,6 +9,18 @@ import (
 	"k8s.io/client-go/kubernetes/fake"
 )
 
+func TestNewKubernetes(t *testing.T) {
+	vm := otto.New()
+	c := fake.NewSimpleClientset()
+	ns := "foobar"
+
+	k := NewKubernetes(vm, c, ns)
+	nsv := k.GetNS()
+	if kns, _ := nsv.ToString(); kns != ns {
+		t.Errorf("Expected ns=%q, got %q", kns)
+	}
+}
+
 func TestRegister(t *testing.T) {
 	vm := otto.New()
 	if err := Register(vm); err != nil {

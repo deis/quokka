@@ -20,9 +20,9 @@ type ServiceAccount struct {
 	// Patch func() otto.Value `otto:"patch"`
 }
 
-func NewServiceAccount(c kubernetes.Interface, o *otto.Otto) *ServiceAccount {
+func NewServiceAccount(c kubernetes.Interface, o *otto.Otto, ns string) *ServiceAccount {
 	pi := func() v1core.ServiceAccountInterface {
-		return c.CoreV1().ServiceAccounts("default")
+		return c.CoreV1().ServiceAccounts(ns)
 	}
 	return &ServiceAccount{
 		Create: func(pod map[string]interface{}) otto.Value {
