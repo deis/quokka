@@ -41,6 +41,11 @@ func main() {
 }
 
 func run(cmd *cobra.Command, args []string) error {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println(err)
+		}
+	}()
 	if len(args) == 0 {
 		return fmt.Errorf("at least one filename must be specified")
 	}
