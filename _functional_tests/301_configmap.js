@@ -1,13 +1,13 @@
 console.log("====> configmap test")
 cmname = "myconfigmap"
-ns = "quokkatest"
-k = kubernetes.withNS(ns)
+myns = "quokkatest"
+//myns = "default"
 myconfigmap = {
     "kind": "ConfigMap",
     "apiVersion": "v1",
     "metadata": {
         "name": cmname,
-        "namespace": ns,
+        "namespace": myns,
         "labels": {
             "heritage": "Quokka",
         },
@@ -16,6 +16,10 @@ myconfigmap = {
         "username": "hello"
     },
 };
+k = kubernetes.withNS(myns)
+
+// Clean up after any failed tests
+k.configmap.deleteCollection({}, {labelSelector: "heritage=Quokka"})
 
 
 res = k.configmap.create(myconfigmap)

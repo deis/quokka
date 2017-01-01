@@ -96,13 +96,18 @@ func MustToObject(v interface{}, o *otto.Otto) otto.Value {
 	return val
 }
 
-// poe is panic-on-error
+// poe is panic-on-error designed to bubble errors into the JS runtime.
+//
+// We use a custom error type KubernetesError to indicate the source of
+// the problem.
 //
 // In the JavaScript runtime, throw/catch is implemented using panic. So
 // to bubble an error to a try/catch, we need to panic.
 func poe(err error) {
 	if err != nil {
-		panic(err)
+		//panic(otto.MakeCustomError(KubernetesErrorType, err.Error()))
+		v, _ := otto.ToValue(err.Error())
+		panic(v)
 	}
 }
 

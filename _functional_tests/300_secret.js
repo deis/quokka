@@ -1,14 +1,13 @@
 console.log("====> secret test") // Oooo... mysterious.
 
 secname = "mysecret"
-ns = "quokkatest"
-k = kubernetes.withNS(ns)
+var myns = "quokkatest"
 mysecret = {
     "kind": "Secret",
     "apiVersion": "v1",
     "metadata": {
         "name": secname,
-        //"namespace": "quokkatest",
+        "namespace": myns,
         "labels": {
             "heritage": "Quokka",
         },
@@ -18,6 +17,7 @@ mysecret = {
         "username": "YWRtaW4="
     },
 };
+k = kubernetes.withNS(myns)
 
 res = k.secret.create(mysecret)
 if (res.metadata.name != secname) {
@@ -47,7 +47,14 @@ if (res2.metadata.annotations.foo != "bar") {
 k.secret.deleteCollection({}, {labelSelector: "heritage = Quokka"})
 
 // Verify delete
-pp = k.secret.get(secname)
-if (pp != undefined) {
-	throw "expected secret to be deleted"
+isDel = false
+try {
+  console.log("Verifying deleted")
+  k.secret.get(secname)
+} catch (e) {
+  isDel = true
+}
+
+if (!isDel) {
+  throw "expected secret to be deleted"
 }
