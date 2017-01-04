@@ -1,5 +1,5 @@
-hash: 6cabd9f76ec1e131f6166287c08b0fa9953a435b914009e4742a669b3c2a1915
-updated: 2016-12-30T17:44:17.220377488-07:00
+hash: 78168e9dba060fdaa9fbdfd269b41285c4c92d723ef037edd841fda75fb132c5
+updated: 2017-01-03T17:22:28.456306844-07:00
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -63,6 +63,8 @@ imports:
   version: 3ca23474a7c7203e0a0a070fd33508f6efdb9b3d
 - name: github.com/imdario/mergo
   version: 6633656539c1639d9d78127b7d47c622b5d7b6dc
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/jonboulle/clockwork
   version: 72f9bd7c4e0c2a40055ab3d0f09654f730cce982
 - name: github.com/mailru/easyjson
@@ -92,7 +94,7 @@ imports:
 - name: github.com/spf13/pflag
   version: 5ccb023bc27df288a957c5e994cd44fd19619465
 - name: github.com/technosophos/ottomatic
-  version: 9dbbeaf3fa6e8678fa4d4dbeea0ab27a98ae73a0
+  version: cfd3b140e4eaa948f4a3d53b4bfd43158fabe3a9
 - name: github.com/ugorji/go
   version: f1f1a805ed361a0e078bb537e4ea78cd37dcf065
   subpackages:

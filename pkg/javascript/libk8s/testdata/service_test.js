@@ -16,30 +16,30 @@ myservice = {
       ]
     },
 };
+svc = kubernetes.withNS("default").core.service
 
-
-res = kubernetes.service.create(myservice)
+res = svc.create(myservice)
 if (res.metadata.name != servicename) {
 	throw "expected service named " + servicename
 }
 
 // Get our new service by name
-pp = kubernetes.service.get(servicename)
+pp = svc.get(servicename)
 if (pp.metadata.name != servicename) {
 	throw "unexpected service name: " + pp.metadata.name
 }
 
 // Search for our new service.
-matches = kubernetes.service.list({labelSelector: "heritage = Quokka"})
+matches = svc.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one service in list"
 }
 
 // Update the service
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.service.update(res)
+res2 = svc.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
-kubernetes.service.delete(servicename, {})
+svc.delete(servicename, {})

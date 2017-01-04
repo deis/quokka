@@ -11,11 +11,11 @@ test: build
 
 .PHONY: up
 up:
-	glide up --skip-vendor
+	glide up --strip-vendor
 
 .PHONY: bootstrap
 bootstrap:
-	glide install --skip-vendor
+	glide install --strip-vendor
 
 .PHONY: ftest
 ftest:

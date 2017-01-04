@@ -31,30 +31,32 @@ mydaemonset = {
     }
 };
 
+ext = kubernetes.withNS("default").extensions
 
-res = kubernetes.daemonset.create(mydaemonset)
+
+res = ext.daemonset.create(mydaemonset)
 if (res.metadata.name != daemonsetname) {
 	throw "expected daemonset named " + daemonsetname
 }
 
 // Get our new daemonset by name
-pp = kubernetes.daemonset.get(daemonsetname)
+pp = ext.daemonset.get(daemonsetname)
 if (pp.metadata.name != daemonsetname) {
 	throw "unexpected daemonset name: " + pp.metadata.name
 }
 
 // Search for our new daemonset.
-matches = kubernetes.daemonset.list({labelSelector: "heritage = Quokka"})
+matches = ext.daemonset.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one daemonset in list"
 }
 
 // Update the daemonset
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.daemonset.update(res)
+res2 = ext.daemonset.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
-kubernetes.daemonset.delete(daemonsetname, {})
-kubernetes.daemonset.deleteCollection({}, {labelSelector: "heritage=Quokka"})
+ext.daemonset.delete(daemonsetname, {})
+ext.daemonset.deleteCollection({}, {labelSelector: "heritage=Quokka"})

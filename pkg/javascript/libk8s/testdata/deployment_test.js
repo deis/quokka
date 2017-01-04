@@ -31,30 +31,32 @@ mydeployment = {
     }
 };
 
+ext = kubernetes.withNS("default").extensions
 
-res = kubernetes.deployment.create(mydeployment)
+
+res = ext.deployment.create(mydeployment)
 if (res.metadata.name != deploymentname) {
 	throw "expected deployment named " + deploymentname
 }
 
 // Get our new deployment by name
-pp = kubernetes.deployment.get(deploymentname)
+pp = ext.deployment.get(deploymentname)
 if (pp.metadata.name != deploymentname) {
 	throw "unexpected deployment name: " + pp.metadata.name
 }
 
 // Search for our new deployment.
-matches = kubernetes.deployment.list({labelSelector: "heritage = Quokka"})
+matches = ext.deployment.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one deployment in list"
 }
 
 // Update the deployment
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.deployment.update(res)
+res2 = ext.deployment.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
-kubernetes.deployment.delete(deploymentname, {})
-kubernetes.deployment.deleteCollection({}, {labelSelector: "heritage=Quokka"})
+ext.deployment.delete(deploymentname, {})
+ext.deployment.deleteCollection({}, {labelSelector: "heritage=Quokka"})

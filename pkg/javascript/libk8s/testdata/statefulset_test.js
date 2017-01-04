@@ -31,30 +31,31 @@ mystatefulset = {
       }
     }
 };
+ss = kubernetes.withNS("default").apps.statefulset
 
 
-res = kubernetes.statefulset.create(mystatefulset)
+res = ss.create(mystatefulset)
 if (res.metadata.name != statefulsetname) {
 	throw "expected statefulset named " + statefulsetname
 }
 
 // Get our new statefulset by name
-pp = kubernetes.statefulset.get(statefulsetname)
+pp = ss.get(statefulsetname)
 if (pp.metadata.name != statefulsetname) {
 	throw "unexpected statefulset name: " + pp.metadata.name
 }
 
 // Search for our new statefulset.
-matches = kubernetes.statefulset.list({labelSelector: "heritage = Quokka"})
+matches = ss.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one statefulset in list"
 }
 
 // Update the statefulset
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.statefulset.update(res)
+res2 = ss.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
-kubernetes.statefulset.delete(statefulsetname, {})
+ss.delete(statefulsetname, {})

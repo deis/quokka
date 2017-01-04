@@ -31,30 +31,31 @@ myreplicaset = {
     }
 };
 
+rs = kubernetes.withNS("default").extensions.replicaset
 
-res = kubernetes.replicaset.create(myreplicaset)
+res = rs.create(myreplicaset)
 if (res.metadata.name != replicasetname) {
 	throw "expected replicaset named " + replicasetname
 }
 
 // Get our new replicaset by name
-pp = kubernetes.replicaset.get(replicasetname)
+pp = rs.get(replicasetname)
 if (pp.metadata.name != replicasetname) {
 	throw "unexpected replicaset name: " + pp.metadata.name
 }
 
 // Search for our new replicaset.
-matches = kubernetes.replicaset.list({labelSelector: "heritage = Quokka"})
+matches = rs.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one replicaset in list"
 }
 
 // Update the replicaset
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.replicaset.update(res)
+res2 = rs.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
-kubernetes.replicaset.delete(replicasetname, {})
-kubernetes.replicaset.deleteCollection({}, {labelSelector: "heritage=Quokka"})
+rs.delete(replicasetname, {})
+rs.deleteCollection({}, {labelSelector: "heritage=Quokka"})

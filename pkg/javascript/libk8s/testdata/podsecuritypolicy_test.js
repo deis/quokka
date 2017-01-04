@@ -11,30 +11,32 @@ mypodsecuritypolicy = {
     "spec": { }
 };
 
+psp = kubernetes.withNS("default").extensions.podsecuritypolicy
 
-res = kubernetes.podsecuritypolicy.create(mypodsecuritypolicy)
+
+res = psp.create(mypodsecuritypolicy)
 if (res.metadata.name != podsecuritypolicyname) {
 	throw "expected podsecuritypolicy named " + podsecuritypolicyname
 }
 
 // Get our new podsecuritypolicy by name
-pp = kubernetes.podsecuritypolicy.get(podsecuritypolicyname)
+pp = psp.get(podsecuritypolicyname)
 if (pp.metadata.name != podsecuritypolicyname) {
 	throw "unexpected podsecuritypolicy name: " + pp.metadata.name
 }
 
 // Search for our new podsecuritypolicy.
-matches = kubernetes.podsecuritypolicy.list({labelSelector: "heritage = Quokka"})
+matches = psp.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one podsecuritypolicy in list"
 }
 
 // Update the podsecuritypolicy
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.podsecuritypolicy.update(res)
+res2 = psp.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
-kubernetes.podsecuritypolicy.delete(podsecuritypolicyname, {})
-kubernetes.podsecuritypolicy.deleteCollection({}, {labelSelector: "heritage=Quokka"})
+psp.delete(podsecuritypolicyname, {})
+psp.deleteCollection({}, {labelSelector: "heritage=Quokka"})

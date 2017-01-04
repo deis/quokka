@@ -11,29 +11,31 @@ myserviceaccount = {
     }
 };
 
+sa = kubernetes.withNS("default").core.serviceaccount
 
-res = kubernetes.serviceaccount.create(myserviceaccount)
+
+res = sa.create(myserviceaccount)
 if (res.metadata.name != serviceaccountname) {
 	throw "expected serviceaccount named " + serviceaccountname
 }
 
 // Get our new serviceaccount by name
-pp = kubernetes.serviceaccount.get(serviceaccountname)
+pp = sa.get(serviceaccountname)
 if (pp.metadata.name != serviceaccountname) {
 	throw "unexpected serviceaccount name: " + pp.metadata.name
 }
 
 // Search for our new serviceaccount.
-matches = kubernetes.serviceaccount.list({labelSelector: "heritage = Quokka"})
+matches = sa.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one serviceaccount in list"
 }
 
 // Update the serviceaccount
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.serviceaccount.update(res)
+res2 = sa.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
-kubernetes.serviceaccount.delete(serviceaccountname, {})
+sa.delete(serviceaccountname, {})

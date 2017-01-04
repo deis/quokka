@@ -30,30 +30,32 @@ myjob = {
     }
 };
 
+batch = kubernetes.withNS("default").batch
 
-res = kubernetes.job.create(myjob)
+
+res = batch.job.create(myjob)
 if (res.metadata.name != jobname) {
 	throw "expected job named " + jobname
 }
 
 // Get our new job by name
-pp = kubernetes.job.get(jobname)
+pp = batch.job.get(jobname)
 if (pp.metadata.name != jobname) {
 	throw "unexpected job name: " + pp.metadata.name
 }
 
 // Search for our new job.
-matches = kubernetes.job.list({labelSelector: "heritage = Quokka"})
+matches = batch.job.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one job in list"
 }
 
 // Update the job
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.job.update(res)
+res2 = batch.job.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
-kubernetes.job.delete(jobname, {})
-kubernetes.job.deleteCollection({}, {labelSelector: "heritage=Quokka"})
+batch.job.delete(jobname, {})
+batch.job.deleteCollection({}, {labelSelector: "heritage=Quokka"})

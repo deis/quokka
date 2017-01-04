@@ -5,12 +5,40 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/deis/quokka/pkg/javascript"
 	"github.com/deis/quokka/pkg/javascript/libk8s"
+	"github.com/spf13/cobra"
 )
 
+const usage = `
+ftest is a functional test runner for quokka.
+
+It is hard-coded to run the functional test suite found inside of the
+_functional_tests directory in the Quokka source code.
+
+It executes each functional JavaScript file in sequence, running against
+whatever cluster $KUBECONFIG points to.
+`
+
+var until string
+
 func main() {
+	cmd := &cobra.Command{
+		Use:   "ftest",
+		Short: "run functional tests for quokka",
+		Long:  usage,
+		Run:   run,
+	}
+	cmd.PersistentFlags().StringVarP(&until, "until", "u", "", "Stop when it hits the named test (and don't execute that test).")
+	if err := cmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+func run(cmd *cobra.Command, args []string) {
 	testloc, _ := filepath.Abs("./_functional_tests/*.js")
 
 	scripts, err := filepath.Glob(testloc)
@@ -26,6 +54,9 @@ func main() {
 
 	failures := []string{}
 	for _, f := range scripts {
+		if strings.Contains(f, until) {
+			break
+		}
 		d, err := ioutil.ReadFile(f)
 		if err != nil {
 			fmt.Printf("failed to load %s: %s\n", f, err)

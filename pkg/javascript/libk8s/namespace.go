@@ -75,3 +75,14 @@ func NewNamespace(c kubernetes.Interface, o *otto.Otto) *Namespace {
 		},
 	}
 }
+
+func listAllNamespaces(c kubernetes.Interface, o *otto.Otto) otto.Value {
+	opts := v1.ListOptions{}
+	list, err := c.CoreV1().Namespaces().List(opts)
+	poe(err)
+	res := []string{}
+	for _, li := range list.Items {
+		res = append(res, li.Name)
+	}
+	return MustToObject(res, o)
+}
