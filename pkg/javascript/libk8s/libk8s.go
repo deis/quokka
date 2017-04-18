@@ -99,7 +99,13 @@ func kubeConfig() (*rest.Config, error) {
 	return cfg.ClientConfig()
 }
 
-func kubeClient() (kubernetes.Interface, error) {
+// KubeClient returns an initialized Kubernetes client.
+//
+// Normally, it is best to use Register() instead.
+//
+// This will attempt to load a KUBECONFIG from a variety of well-known locations
+// and formats. Then it will initialize a client with the found configuration.
+func KubeClient() (kubernetes.Interface, error) {
 	cfg, err := kubeConfig()
 	if err != nil {
 		return nil, err

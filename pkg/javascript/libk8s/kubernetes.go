@@ -66,7 +66,7 @@ func NewKubernetes(vm *otto.Otto, c kubernetes.Interface, ns string) *Kubernetes
 
 // Register registers the top-level Kubernetes API objects with the JS runtime.
 func Register(vm *otto.Otto) error {
-	c, err := kubeClient()
+	c, err := KubeClient()
 	if err != nil {
 		return err
 	}
