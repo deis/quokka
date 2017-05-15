@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
-	"strings"
 
 	"github.com/robertkrimen/otto"
 
@@ -73,28 +71,12 @@ func (r *Runtime) MustRemarshal(src, dest interface{}) {
 }
 
 func kubeConfig() (*rest.Config, error) {
-	// Try in-cluster config:
-	c, err := rest.InClusterConfig()
-	if err == nil {
-		log.Print("in-cluster")
-		return c, nil
-	}
+	rules := clientcmd.NewDefaultClientConfigLoadingRules()
+	rules.DefaultClientConfig = &clientcmd.DefaultClientConfig
 
-	// TODO: Env vars support colon-separated list (and kubectl allows this).
-	// Figure out how to do this with client-go.
-	kconf := os.Getenv("KUBECONFIG")
-	parts := strings.Split(kconf, ":")
-	kconf = parts[0]
-	if len(parts) > 0 {
-		log.Printf("WARNING: Building config only from %q", kconf)
-	}
+	overrides := &clientcmd.ConfigOverrides{ClusterDefaults: clientcmd.ClusterDefaults}
 
-	cfg := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kconf},
-		&clientcmd.ConfigOverrides{})
-
-	//rc, _ := cfg.RawConfig()
-	//fmt.Printf("Use context: %s\n", rc.CurrentContext)
+	cfg := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(rules, overrides)
 
 	return cfg.ClientConfig()
 }
