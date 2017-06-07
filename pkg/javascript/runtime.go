@@ -12,6 +12,7 @@ type Runtime struct {
 	times map[*timing]struct{}
 }
 
+// NewRuntime returns a new Runtime. Access the vm via the VM() accessor.
 func NewRuntime() *Runtime {
 	rt := &Runtime{
 		vm:    otto.New(),
@@ -37,19 +38,30 @@ func (rt *Runtime) Run(src interface{}) (ret otto.Value, err error) {
 	if rt == nil {
 		rt = NewRuntime()
 	}
+	// Execute src in the js vm.
 	if ret, err = rt.vm.Run(src); err != nil {
 		return otto.UndefinedValue(), err
 	}
 	defer rt.stop()
+	// This is the main event loop. When a timing is added as a result
+	// of `setTimeout` or `setInterval`, a *time.Timer is set to elapse
+	// after the provided duration (given in the api call, e,g,
+	// `setTimeout(timeoutCallback(), 2000)`).
 	for {
 		select {
+		// Once the timer elapses, it's pushed on the runtime ready channel.
+		// The runtime then invokes the callback given in the setTimeout
+		// or setInterval call (in `fire`).
 		case tm := <-rt.ready:
 			if err := rt.fire(tm); err != nil {
 				fmt.Printf("error: firing timer: %v\n", err)
 				return otto.UndefinedValue(), err
 			}
-		default:
+		default: // noop -- to avoid blocking on ready channel.
 		}
+		// if there are no times being tracked, then we can assume
+		// all timers that were set (if any) have elapsed. We can
+		// safely assume the script has finished executing and exit.
 		if len(rt.times) == 0 {
 			return
 		}
@@ -57,6 +69,7 @@ func (rt *Runtime) Run(src interface{}) (ret otto.Value, err error) {
 	return ret, nil
 }
 
+// VM is an accessor for the js vm.
 func (rt *Runtime) VM() *otto.Otto { return rt.vm }
 
 // add adds the timing to the runtime.
