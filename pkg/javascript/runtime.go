@@ -33,7 +33,7 @@ func NewRuntime() *Runtime {
 // 		clearTimeout
 // 		setInterval
 //		setTimeout
-func (rt *Runtime) Run(src string) (ret otto.Value, err error) {
+func (rt *Runtime) Run(src interface{}) (ret otto.Value, err error) {
 	if rt == nil {
 		rt = NewRuntime()
 	}
@@ -80,7 +80,7 @@ func (rt *Runtime) fire(t *timing) error {
 	// very intelligble at a glance. The idea is that
 	// ```t.call.ArgumentList[2:]``` contains the args
 	// for the callback given to setTimer and setInterval.
-	// This block is directly from from natto.
+	// This block is directly from natto.
 	var args []interface{}
 	if len(t.call.ArgumentList) > 2 {
 		tmp := t.call.ArgumentList[2:]

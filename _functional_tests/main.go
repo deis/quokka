@@ -77,9 +77,9 @@ func run(cmd *cobra.Command, args []string) {
 
 func execScript(script []byte) error {
 	rt := javascript.NewRuntime()
-	if err := libk8s.Register(rt.VM); err != nil {
+	if err := libk8s.Register(rt.VM()); err != nil {
 		return err
 	}
-	_, err := rt.VM.Run(script)
+	_, err := rt.Run(script)
 	return err
 }
