@@ -6,11 +6,11 @@ import (
 
 func TestNewRuntime(t *testing.T) {
 	r := NewRuntime()
-	if err := r.VM.Set("my.val", 1); err != nil {
+	if err := r.VM().Set("my.val", 1); err != nil {
 		t.Fatalf("Failed to set myval=%d: %s", 1, err)
 	}
 
-	v, err := r.VM.Get("my.val")
+	v, err := r.VM().Get("my.val")
 	if err != nil {
 		t.Fatalf("failed to get myval: %s", err)
 	}
