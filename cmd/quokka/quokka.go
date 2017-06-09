@@ -50,14 +50,14 @@ func run(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("at least one filename must be specified")
 	}
 	rt := javascript.NewRuntime()
-	libk8s.Register(rt.VM)
+	libk8s.Register(rt.VM())
 
 	for _, file := range args {
 		data, err := ioutil.ReadFile(file)
 		if err != nil {
 			return err
 		}
-		if _, err = rt.VM.Run(data); err != nil {
+		if _, err = rt.Run(data); err != nil {
 			return err
 		}
 	}
