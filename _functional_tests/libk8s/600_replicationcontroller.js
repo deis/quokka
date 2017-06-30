@@ -6,16 +6,20 @@ myreplicationcontroller = {
     "apiVersion": "v1",
     "metadata": {
         "name": replicationcontrollername,
-        "namespace": "default",
+        "namespace": "quokkatest",
         "labels": {
-            "heritage": "Quokka",
+            "heritage": "Quokka"
         },
     },
     "spec": {
       "replicas": 1,
-      "selector": {"app": "nginx"},
+      // The API for this changed, but is undocumented.
+      "selector": {"app":"nginx"},
       "template": {
-        "metadata": {"name": "nginx"},
+        "metadata": {
+          "name": "nginx"
+          "labels": {"app":"nginx"},
+        },
         "spec": {
           "containers": [
               {
@@ -33,29 +37,31 @@ myreplicationcontroller = {
     }
 };
 
+RC = kubernetes.withNS("quokkatest").coreV1.replicationcontroller
 
-res = kubernetes.replicationcontroller.create(myreplicationcontroller)
+
+res = RC.create(myreplicationcontroller)
 if (res.metadata.name != replicationcontrollername) {
 	throw "expected replicationcontroller named " + replicationcontrollername
 }
 
 // Get our new replicationcontroller by name
-pp = kubernetes.replicationcontroller.get(replicationcontrollername)
+pp = RC.get(replicationcontrollername)
 if (pp.metadata.name != replicationcontrollername) {
 	throw "unexpected replicationcontroller name: " + pp.metadata.name
 }
 
 // Search for our new replicationcontroller.
-matches = kubernetes.replicationcontroller.list({labelSelector: "heritage = Quokka"})
+matches = RC.list({labelSelector: "heritage = Quokka"})
 if (matches.items.length == 0) {
 	throw "expected at least one replicationcontroller in list"
 }
 
 // Update the replicationcontroller
 res.metadata.annotations = {"foo": "bar"}
-res2 = kubernetes.replicationcontroller.update(res)
+res2 = RC.update(res)
 if (res2.metadata.annotations.foo != "bar") {
 	throw "expected foo annotation"
 }
 
-kubernetes.replicationcontroller.delete(replicationcontrollername, {})
+RC.delete(replicationcontrollername, {})

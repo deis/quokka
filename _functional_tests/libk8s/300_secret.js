@@ -17,7 +17,7 @@ mysecret = {
         "username": "YWRtaW4="
     },
 };
-k = kubernetes.withNS(myns)
+k = kubernetes.withNS(myns).coreV1
 
 res = k.secret.create(mysecret)
 if (res.metadata.name != secname) {

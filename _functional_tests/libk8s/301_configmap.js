@@ -16,7 +16,7 @@ myconfigmap = {
         "username": "hello"
     },
 };
-k = kubernetes.withNS(myns)
+k = kubernetes.withNS(myns).extensions
 
 // Clean up after any failed tests
 k.configmap.deleteCollection({}, {labelSelector: "heritage=Quokka"})

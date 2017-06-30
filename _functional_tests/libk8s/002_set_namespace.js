@@ -4,6 +4,6 @@ if (k.getNS() != "quokkatest") {
   throw "Expected quokkatest ns, got " + k.getNS()
 }
 
-if (k.discovery == undefined) {
+if (k.coreV1 == undefined) {
   throw "discover object is missing"
 }

@@ -9,6 +9,13 @@ import (
 	js "github.com/deis/quokka/pkg/javascript/jsutil"
 )
 
+// DefaultLoader creates a strategic loader backed by a filesystem loader.
+//
+// This is suitable for loading off of a local filesystem.
+func DefaultLoader(path string) FileLoader {
+	return NewStrategicLoader(FilesystemLoader(path))
+}
+
 // Module describes a JavaScript module.
 //
 // The structure is based off of Node.js's module function, but compatibility

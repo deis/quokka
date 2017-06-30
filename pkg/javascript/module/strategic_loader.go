@@ -1,6 +1,7 @@
 package module
 
 import (
+	"fmt"
 	"os"
 )
 
@@ -30,5 +31,5 @@ func (s *StrategicLoader) Load(filename string) ([]byte, error) {
 	if loader.IsFile(filename + ".js") {
 		return loader.Load(filename + ".js")
 	}
-	return []byte{}, os.ErrNotExist
+	return []byte{}, fmt.Errorf("%s %s", os.ErrNotExist, filename)
 }

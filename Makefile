@@ -19,4 +19,4 @@ bootstrap:
 
 .PHONY: ftest
 ftest:
-	bin/ftest
+	bin/ftest --verbose
